@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Cara Como Datos — TV</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #04040a;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  font-family: 'IBM Plex Mono', monospace;
+  position: relative;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(57,255,20,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,20,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Accent bars */
+.bar-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #39ff14, #00cfff, #ff2d78, #39ff14);
+  background-size: 200%;
+  animation: barSlide 4s linear infinite;
+  z-index: 10;
+}
+.bar-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff2d78, #00cfff, #39ff14, #ff2d78);
+  background-size: 200%;
+  animation: barSlide 4s linear infinite reverse;
+  z-index: 10;
+}
+@keyframes barSlide { 0%{background-position:0%} 100%{background-position:200%} }
+
+/* Main layout */
+.layout {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 680px;
+  gap: 0;
+  align-items: center;
+  padding: 60px 80px 60px 100px;
+}
+
+/* LEFT side */
+.left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding-right: 60px;
+}
+
+.tag {
+  font-size: 18px;
+  letter-spacing: 6px;
+  color: #39ff14;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tag-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #39ff14;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+.main-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 200px;
+  line-height: 0.85;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #39ff14 0%, #00cfff 60%, #ff2d78 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 40px;
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%,100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
+.hook {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 3px;
+  line-height: 1.1;
+  margin-bottom: 36px;
+  overflow: hidden;
+}
+
+.hook-line {
+  display: block;
+  color: #f0f0f8;
+  animation: slideIn 0.8s ease forwards;
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.hook-line:nth-child(1) { animation-delay: 0.3s; }
+.hook-line:nth-child(2) { animation-delay: 0.6s; }
+.hook-line:nth-child(3) { animation-delay: 0.9s; color: #00cfff; }
+
+@keyframes slideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.sub {
+  font-size: 20px;
+  color: #5a5a7a;
+  letter-spacing: 3px;
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+
+/* Floating tags */
+.badge-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 14px;
+  letter-spacing: 2px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: 1px solid;
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+.badge:nth-child(1) { animation-delay: 1.2s; color:#39ff14; border-color:rgba(57,255,20,0.4); }
+.badge:nth-child(2) { animation-delay: 1.4s; color:#00cfff; border-color:rgba(0,207,255,0.4); }
+.badge:nth-child(3) { animation-delay: 1.6s; color:#ff2d78; border-color:rgba(255,45,120,0.4); }
+
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* RIGHT side */
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  border-left: 1px solid #1e1e30;
+  padding-left: 60px;
+  height: 100%;
+}
+
+.scan-text {
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: #39ff14;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qr-wrapper {
+  position: relative;
+}
+
+.qr-box {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: inline-block;
+  position: relative;
+  box-shadow: 0 0 60px rgba(57,255,20,0.15), 0 0 120px rgba(0,207,255,0.08);
+  animation: qrPulse 3s ease-in-out infinite;
+}
+
+@keyframes qrPulse {
+  0%,100% { box-shadow: 0 0 40px rgba(57,255,20,0.15), 0 0 80px rgba(0,207,255,0.08); }
+  50% { box-shadow: 0 0 80px rgba(57,255,20,0.3), 0 0 160px rgba(0,207,255,0.15); }
+}
+
+/* Corner accents */
+.corner { position: absolute; width: 28px; height: 28px; }
+.corner-tl { top:-4px; left:-4px; border-top:4px solid #39ff14; border-left:4px solid #39ff14; border-radius:6px 0 0 0; }
+.corner-tr { top:-4px; right:-4px; border-top:4px solid #00cfff; border-right:4px solid #00cfff; border-radius:0 6px 0 0; }
+.corner-bl { bottom:-4px; left:-4px; border-bottom:4px solid #00cfff; border-left:4px solid #00cfff; border-radius:0 0 0 6px; }
+.corner-br { bottom:-4px; right:-4px; border-bottom:4px solid #ff2d78; border-right:4px solid #ff2d78; border-radius:0 0 6px 0; }
+
+#qrcode canvas, #qrcode img { display:block; border-radius:6px; }
+
+.url-text {
+  font-size: 18px;
+  color: #5a5a7a;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.url-text span { color: #39ff14; }
+
+/* Team */
+.team {
+  text-align: center;
+  border-top: 1px solid #1e1e30;
+  padding-top: 20px;
+  width: 100%;
+}
+
+.team-label {
+  font-size: 14px;
+  color: #44445a;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+.team-names {
+  font-size: 16px;
+  color: #6666aa;
+  line-height: 1.9;
+  letter-spacing: 0.5px;
+}
+
+.inst {
+  font-size: 13px;
+  color: #33334a;
+  margin-top: 10px;
+  letter-spacing: 1px;
+  line-height: 1.6;
+}
+
+/* Animated matrix rain on edges */
+.matrix-side {
+  position: absolute;
+  top: 6px; bottom: 4px;
+  width: 40px;
+  overflow: hidden;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+.matrix-side.left-side { left: 0; }
+.matrix-side.right-side { right: 0; }
+</style>
+</head>
+<body>
+
+<div class="bar-top"></div>
+<div class="bar-bottom"></div>
+
+<!-- Matrix rain sides -->
+<canvas class="matrix-side left-side" id="rain-left"></canvas>
+<canvas class="matrix-side right-side" id="rain-right"></canvas>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="tag">
+      <div class="tag-dot"></div>
+      feria de matemáticas
+    </div>
+
+    <div class="main-title">TU CARA<br>COMO<br>DATOS</div>
+
+    <div class="hook">
+      <span class="hook-line">¿SABÍAS QUE TU FOTO</span>
+      <span class="hook-line">ES UNA MATRIZ DE NÚMEROS?</span>
+      <span class="hook-line">→ VEN Y DESCÚBRELO.</span>
+    </div>
+
+    <p class="sub">
+      ÁLGEBRA LINEAL · BIG DATA · CIENCIA DE DATOS
+    </p>
+
+    <div class="badge-row">
+      <span class="badge">INTERACTIVO</span>
+      <span class="badge">USA TU CÁMARA</span>
+      <span class="badge">100% MATEMÁTICAS</span>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="scan-text">
+      <div class="tag-dot"></div>
+      Escanea y prueba
+    </div>
+
+    <div class="qr-wrapper">
+      <div class="qr-box">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+        <div id="qrcode"></div>
+      </div>
+    </div>
+
+    <div class="url-text">
+      <span>daatamatrix.github.io</span><br>
+      /tu-cara-en-datos
+    </div>
+
+    <div class="team">
+      <div class="team-label">// equipo</div>
+      <div class="team-names">
+        Carlos Rodríguez · Jelissa Castillo<br>
+        Isaías López · Gilberto Castillo · Abel Castillo
+      </div>
+      <div class="inst">
+        Instituto Técnico Superior Especializado<br>
+        Técnico en Big Data y Ciencia de Datos
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// QR
+new QRCode(document.getElementById("qrcode"), {
+  text: "https://daatamatrix.github.io/tu-cara-en-datos",
+  width: 340,
+  height: 340,
+  colorDark: "#000000",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+// Matrix rain on sides
+function initRain(canvasId, side) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  canvas.width = 40;
+  canvas.height = window.innerHeight || 1080;
+  const cols = Math.floor(40 / 14);
+  const drops = Array(cols).fill(1);
+  setInterval(() => {
+    ctx.fillStyle = 'rgba(4,4,10,0.07)';
+    ctx.fillRect(0, 0, 40, canvas.height);
+    ctx.fillStyle = '#39ff14';
+    ctx.font = '12px IBM Plex Mono';
+    drops.forEach((y, i) => {
+      const ch = String.fromCharCode(0x30A0 + Math.random() * 96);
+      ctx.fillText(ch, i * 14, y * 14);
+      if (y * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    });
+  }, 80);
+}
+
+initRain('rain-left');
+initRain('rain-right');
+</script>
+</body>
+</html>
