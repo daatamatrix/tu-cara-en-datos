@@ -223,13 +223,29 @@ input[type=range] { width:100%; accent-color:var(--accent); cursor:pointer; marg
   0%{opacity:1} 10%{opacity:0.3} 20%{opacity:1} 30%{opacity:0.5} 100%{opacity:1}
 }
 .glitching { animation: glitchFlash 0.4s ease; }
+
+/* Info boxes */
+.funfact, .tip, .example {
+  border-radius:6px; padding:12px 14px;
+  margin-top:12px; font-size:10px; line-height:1.8;
+}
+.funfact { background:rgba(255,45,120,0.06); border-left:3px solid #ff2d78; }
+.funfact::before { content:"⚡ FUN FACT — "; color:#ff2d78; font-weight:700; letter-spacing:1px; }
+.tip { background:rgba(0,207,255,0.06); border-left:3px solid #00cfff; }
+.tip::before { content:"💡 TIP — "; color:#00cfff; font-weight:700; letter-spacing:1px; }
+.example { background:rgba(57,255,20,0.05); border-left:3px solid #39ff14; }
+.example::before { content:"🌍 EN LA VIDA REAL — "; color:#39ff14; font-weight:700; letter-spacing:1px; }
+.info-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.info-cell { background:#08080f; border:1px solid var(--border); border-radius:6px; padding:10px; font-size:10px; line-height:1.7; }
+.info-cell .lbl { color:var(--accent); font-weight:700; display:block; margin-bottom:4px; font-size:9px; letter-spacing:1px; }
+.submatrix-label { font-size:9px; text-align:center; margin-top:5px; color:var(--muted); letter-spacing:1px; line-height:1.6; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>TU CARA<br>COMO DATOS</h1>
-  <p>// cada píxel es un número · cada imagen es una matriz</p>
+  <p>// descubre cómo se ve tu cara como datos matemáticos</p>
 </div>
 
 <!-- Hidden inputs -->
@@ -259,48 +275,67 @@ input[type=range] { width:100%; accent-color:var(--accent); cursor:pointer; marg
 </div>
 
 <!-- Tabs -->
-<div class="tabs" id="tabs" style="grid-template-columns:repeat(5,1fr)">
-  <div class="tab active" onclick="showTab(0)">🔢<br>Matriz</div>
-  <div class="tab" onclick="showTab(1)">🎨<br>Canales</div>
-  <div class="tab" onclick="showTab(2)">🗜️<br>PCA</div>
-  <div class="tab" onclick="showTab(3)">🔍<br>Píxeles</div>
-  <div class="tab" onclick="showTab(4)">⚡<br>Glitch</div>
+<div class="tabs" id="tabs" style="grid-template-columns:repeat(3,1fr); margin-bottom:6px;">
+  <div class="tab active" onclick="showTab(0)">🔢 Matriz</div>
+  <div class="tab" onclick="showTab(1)">🎨 Canales</div>
+  <div class="tab" onclick="showTab(2)">🗜️ PCA</div>
+</div>
+<div class="tabs" id="tabs2" style="grid-template-columns:repeat(3,1fr); display:none">
+  <div class="tab" onclick="showTab(3)">🔍 Píxeles</div>
+  <div class="tab" onclick="showTab(4)">⚡ Glitch</div>
+  <div class="tab" onclick="showTab(5)">〜 Ondas</div>
 </div>
 
 <!-- Panel 0: Matriz -->
 <div class="panel active" id="panel-0">
   <div class="panel-title">MATRIZ DE PÍXELES</div>
-  <div class="panel-sub">Muestra de <strong>10×20 valores</strong> reales de tu imagen</div>
+  <div class="panel-sub">Estos son los <strong>números reales</strong> que forman tu foto — una muestra de 10×20 valores</div>
   <div class="matrix-wrap" id="matrix-display">
     <div class="placeholder"><div class="placeholder-icon">[ ]</div>Sube una foto primero</div>
   </div>
   <div class="explain">
-    Cada píxel = <strong>3 números</strong> (R, G, B) entre 0 y 255.<br>
-    Una imagen 640×480 = <strong>921,600 valores</strong> numéricos.<br>
-    Matemáticamente: <strong>M ∈ ℝ^(480 × 640 × 3)</strong>
+    <strong>¿Por qué esos números exactos?</strong><br>
+    Cada número representa el <strong>brillo de ese punto</strong> en tu imagen, en una escala del 0 al 255.<br>
+    — <strong>0</strong> = negro total (sin luz)<br>
+    — <strong>128</strong> = gris medio<br>
+    — <strong>255</strong> = blanco puro (máxima luz)<br><br>
+    Esos valores no los inventamos: la computadora los mide directamente del sensor de la cámara. Cada foto real es una <strong>tabla gigante de estas mediciones</strong>. Una foto HD (1920×1080) tiene más de <strong>2 millones de valores</strong> solo de brillo.
   </div>
+  <div class="info-row">
+    <div class="info-cell"><span class="lbl">ESCALA</span>0 = negro<br>128 = gris<br>255 = blanco</div>
+    <div class="info-cell"><span class="lbl">TAMAÑO</span>640×480 px<br>= 307,200<br>valores</div>
+  </div>
+  <div class="funfact">Las pantallas de tu celular tienen más de 400 píxeles por pulgada. En un área del tamaño de tu uña hay miles de estos números actualizándose 60 veces por segundo.</div>
+  <div class="example">Netflix y YouTube comprimen estas matrices para enviarte video sin consumir todo tu internet. Sin álgebra lineal, un video de 2 horas pesaría cientos de GB.</div>
 </div>
 
 <!-- Panel 1: Canales -->
 <div class="panel" id="panel-1">
   <div class="panel-title">CANALES RGB</div>
-  <div class="panel-sub">Tu imagen en <strong>3 submatrices</strong> independientes</div>
+  <div class="panel-sub">Tu imagen separada en <strong>3 submatrices independientes</strong> — una por cada color</div>
   <div class="channels-grid" id="channels-grid">
     <div class="placeholder" style="grid-column:1/-1">
       <div class="placeholder-icon">RGB</div>Sube una foto primero
     </div>
   </div>
   <div class="explain">
-    Cada canal = <strong>una matriz independiente</strong>.<br>
-    El álgebra lineal opera en cada canal por separado —<br>así funciona todo el procesamiento de imagen en <strong>Data Science</strong>.
+    <strong>¿Qué es cada submatriz?</strong><br>
+    Imagina que tu foto tiene 3 capas transparentes apiladas:<br>
+    — La capa <strong style="color:#ff5555">Roja</strong>: qué tan rojo es cada punto<br>
+    — La capa <strong style="color:#55ff55">Verde</strong>: qué tan verde es cada punto<br>
+    — La capa <strong style="color:#5599ff">Azul</strong>: qué tan azul es cada punto<br><br>
+    Cada capa es una <strong>matriz independiente</strong> con valores del 0 al 255. Combinadas, reproducen todos los colores que ves. Un píxel amarillo tiene R=255, G=255, B=0. Un píxel celeste tiene R=0, G=200, B=255.
   </div>
+  <div class="tip">Para convertir tu foto a blanco y negro, se combinan las 3 matrices con la fórmula: <strong>Gris = 0.299·R + 0.587·G + 0.114·B</strong>. Los pesos no son random: el ojo humano es más sensible al verde, por eso tiene el coeficiente más alto.</div>
+  <div class="funfact">Las pantallas no mezclan pigmentos como la pintura — emiten luz. Rojo + Verde + Azul en máxima intensidad da blanco puro. Por eso se llama síntesis aditiva.</div>
+  <div class="example">Las cámaras médicas (como las de resonancia magnética) usan canales adicionales más allá del RGB — pueden tener 10, 20 o más canales para detectar diferentes tejidos del cuerpo.</div>
 </div>
 
 <!-- Panel 2: PCA -->
 <div class="panel" id="panel-2">
   <div class="panel-title">COMPRESIÓN PCA</div>
-  <div class="panel-sub">Mueve el slider para cambiar cuántos <strong>vectores propios</strong> se usan</div>
-  <div class="slider-label"><span>Componentes principales K:</span><span id="k-val">—</span></div>
+  <div class="panel-sub">Mueve el slider y observa cómo tu imagen se reconstruye con menos información</div>
+  <div class="slider-label"><span>Componentes K:</span><span id="k-val">—</span></div>
   <input type="range" id="k-slider" min="2" max="60" value="10" oninput="updateCompression()" disabled>
   <div class="compress-grid" id="compress-grid">
     <div class="placeholder" style="grid-column:1/-1;font-size:10px">Sube una foto primero</div>
@@ -311,28 +346,37 @@ input[type=range] { width:100%; accent-color:var(--accent); cursor:pointer; marg
     <div class="stat-box"><span class="stat-val" id="stat-quality">—</span><span class="stat-lbl">Calidad %</span></div>
   </div>
   <div class="explain">
-    <strong>PCA</strong> = Análisis de Componentes Principales.<br>
-    Usa <strong>eigenvectors</strong> para encontrar los patrones más importantes.<br>
-    Con solo K vectores podemos <strong>reconstruir la imagen</strong> con mucho menos espacio.
+    <strong>¿Qué es PCA?</strong><br>
+    PCA (Análisis de Componentes Principales) es una técnica que encuentra los <strong>patrones más importantes</strong> en un conjunto de datos — y descarta lo que no aporta mucho.<br><br>
+    <strong>¿Qué es K?</strong><br>
+    K es el número de <strong>patrones (componentes) que usamos</strong> para reconstruir la imagen. Con K=2 solo tenemos los 2 patrones más dominantes — poca info, imagen borrosa. Con K=60 tenemos 60 patrones — mucha info, imagen clara.<br><br>
+    Matemáticamente, cada componente es un <strong>eigenvector</strong> (vector propio) de la matriz de datos. Los eigenvectors son direcciones especiales que capturan la mayor variación posible.
   </div>
+  <div class="tip">Sube el slider despacio y observa en qué momento tu cara se vuelve reconocible. Normalmente con K=10 a 15 ya se distinguen los rasgos principales — con una fracción de la información original.</div>
+  <div class="funfact">El formato JPEG usa un principio similar (DCT, primo matemático de PCA) para comprimir tus fotos. Por eso las fotos muy comprimidas se ven "cuadradas" — están usando muy pocos componentes.</div>
+  <div class="example">Spotify usa PCA para reducir miles de características musicales a unas pocas dimensiones clave, y así comparar canciones entre sí. Eso alimenta su sistema de recomendaciones.</div>
 </div>
 
 <!-- Panel 3: Pixel zoom -->
 <div class="panel" id="panel-3">
   <div class="panel-title">ZOOM AL PÍXEL</div>
-  <div class="panel-sub"><strong>Toca la imagen</strong> de arriba para ver los píxeles amplificados</div>
+  <div class="panel-sub"><strong>Toca tu foto</strong> para ver los píxeles ampliados en tiempo real</div>
   <canvas id="pixel-zoom" width="300" height="300"></canvas>
-  <div id="pixel-info">Toca la imagen de tu foto para explorar píxeles...</div>
+  <div id="pixel-info">Toca la imagen de arriba para explorar píxeles...</div>
   <div class="explain">
-    Cada cuadrado = <strong>1 píxel = 1 punto de la matriz</strong>.<br>
-    En Big Data procesamos millones de estas matrices por segundo —<br>eso es <strong>Machine Learning visual</strong>.
+    <strong>¿Cómo sabemos qué números son?</strong><br>
+    Cuando tocas un punto de tu foto, la app lee exactamente la posición [x, y] en la matriz y extrae los 3 valores RGB almacenados ahí. No es una aproximación — son los <strong>valores exactos del píxel</strong> que la cámara capturó.<br><br>
+    Cada cuadrado de la cuadrícula amplificada = <strong>1 píxel = 1 celda de la matriz</strong>. El cuadrado marcado en verde es el píxel que estás tocando en ese momento.
   </div>
+  <div class="tip">Toca zonas distintas de tu foto: la frente (valores altos, colores claros), el cabello (valores bajos, cerca de 0), los ojos. Verás cómo cambian drásticamente los números R, G y B.</div>
+  <div class="funfact">El sensor de tu cámara tiene millones de pequeños detectores de luz — uno por píxel. Cada detector mide cuántos fotones lo golpean y convierte eso en un número. Así nace la matriz.</div>
+  <div class="example">Los sistemas de reconocimiento facial de tu celular (Face ID, por ejemplo) analizan estos valores de píxel y buscan patrones geométricos en la matriz — distancias entre ojos, forma de la nariz, profundidad de rasgos.</div>
 </div>
 
 <!-- Panel 4: Glitch Art -->
 <div class="panel" id="panel-4">
   <div class="panel-title">⚡ GLITCH ART</div>
-  <div class="panel-sub">Operaciones matriciales que <strong>distorsionan</strong> tu imagen — matemáticas visibles</div>
+  <div class="panel-sub">Cada efecto es una <strong>operación matricial real</strong> — toca uno y ve qué pasa</div>
 
   <div class="glitch-grid">
     <button class="glitch-btn selected" onclick="applyGlitch('invert',this)">🔲<br>Inversión<br><span style="color:var(--muted);font-size:9px">255 - M</span></button>
@@ -340,17 +384,41 @@ input[type=range] { width:100%; accent-color:var(--accent); cursor:pointer; marg
     <button class="glitch-btn" onclick="applyGlitch('fliph',this)">↔️<br>Flip H<br><span style="color:var(--muted);font-size:9px">M[:,:-1]</span></button>
     <button class="glitch-btn" onclick="applyGlitch('flipv',this)">↕️<br>Flip V<br><span style="color:var(--muted);font-size:9px">M[::-1,:]</span></button>
     <button class="glitch-btn" onclick="applyGlitch('noise',this)">📡<br>Ruido<br><span style="color:var(--muted);font-size:9px">M + εN</span></button>
-    <button class="glitch-btn" onclick="applyGlitch('shift',this)">🌀<br>Shift<br><span style="color:var(--muted);font-size:9px">M + offset</span></button>
+    <button class="glitch-btn" onclick="applyGlitch('shift',this)">🌀<br>Shift<br><span style="color:var(--muted);font-size:9px">roll(M)</span></button>
   </div>
 
   <div class="glitch-formula" id="glitch-formula">f(M) = 255 − M &nbsp;·&nbsp; inversión de la matriz</div>
   <canvas class="glitch-result" id="glitch-canvas" width="300" height="225"></canvas>
+  <div class="explain" id="glitch-explain"></div>
+  <div class="example" id="glitch-example"></div>
+</div>
 
-  <div class="explain" id="glitch-explain">
-    <strong>Inversión:</strong> Cada valor del píxel se convierte en <strong>255 − valor</strong>.<br>
-    Es una transformación lineal elemental: <strong>f(x) = −x + 255</strong>.<br>
-    Así funcionan los filtros negativos en cualquier editor de imagen.
+<!-- Panel 5: Ondas -->
+<div class="panel" id="panel-5">
+  <div class="panel-title">〜 ONDAS MATEMÁTICAS</div>
+  <div class="panel-sub">Tu imagen distorsionada con <strong>funciones trigonométricas</strong> animadas en vivo</div>
+
+  <canvas id="wave-canvas" width="300" height="225" style="width:100%; border-radius:8px; display:block; margin-bottom:14px; image-rendering:pixelated;"></canvas>
+  <div class="glitch-formula" id="wave-formula">M'[x,y] = M[ x + A·sin(2π·x/λ + t), y ]</div>
+
+  <div style="margin-bottom:12px;">
+    <div class="slider-label"><span>Tipo de onda:</span></div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px;">
+      <button class="glitch-btn selected" onclick="setWave('sinx',this)">sin(x)<br><span style="font-size:9px;color:var(--muted)">horizontal</span></button>
+      <button class="glitch-btn" onclick="setWave('siny',this)">sin(y)<br><span style="font-size:9px;color:var(--muted)">vertical</span></button>
+      <button class="glitch-btn" onclick="setWave('radial',this)">sin(r)<br><span style="font-size:9px;color:var(--muted)">radial</span></button>
+      <button class="glitch-btn" onclick="setWave('cos2',this)">cos²(x)<br><span style="font-size:9px;color:var(--muted)">pulsante</span></button>
+      <button class="glitch-btn" onclick="setWave('xory',this)">sin(x+y)<br><span style="font-size:9px;color:var(--muted)">diagonal</span></button>
+      <button class="glitch-btn" onclick="setWave('ripple',this)">ripple<br><span style="font-size:9px;color:var(--muted)">rejilla</span></button>
+    </div>
+    <div class="slider-label"><span>Amplitud (A) — intensidad:</span><span id="amp-val">12</span></div>
+    <input type="range" id="amp-slider" min="2" max="30" value="12" oninput="document.getElementById('amp-val').textContent=this.value">
+    <div class="slider-label"><span>Longitud de onda (λ) — frecuencia:</span><span id="lam-val">20</span></div>
+    <input type="range" id="lam-slider" min="5" max="60" value="20" oninput="document.getElementById('lam-val').textContent=this.value">
   </div>
+
+  <div class="explain" id="wave-explain"></div>
+  <div class="example" id="wave-example"></div>
 </div>
 
 <!-- Hidden canvases -->
@@ -363,8 +431,12 @@ let imgData = null, pcaData = null;
 
 // ── Tabs ──
 function showTab(i) {
-  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', i===j));
-  document.querySelectorAll('.panel').forEach((p,j) => p.classList.toggle('active', i===j));
+  const allTabs = document.querySelectorAll('.tab');
+  const allPanels = document.querySelectorAll('.panel');
+  allTabs.forEach((t,j) => t.classList.toggle('active', i===j));
+  allPanels.forEach((p,j) => p.classList.toggle('active', i===j));
+  // start/stop wave animation
+  if (i === 5) startWave(); else stopWave();
 }
 
 // ── File input ──
@@ -385,6 +457,7 @@ function loadImage(src) {
     document.getElementById('preview-wrap').style.display = 'block';
     document.getElementById('upload-zone').style.display = 'none';
     document.getElementById('tabs').style.display = 'grid';
+    document.getElementById('tabs2').style.display = 'grid';
 
     // Draw to canvases
     const wc = document.getElementById('work-canvas');
@@ -404,9 +477,11 @@ function loadImage(src) {
 
 function resetAll() {
   imgData = null; pcaData = null;
+  stopWave();
   document.getElementById('preview-wrap').style.display = 'none';
   document.getElementById('upload-zone').style.display = 'block';
   document.getElementById('tabs').style.display = 'none';
+  document.getElementById('tabs2').style.display = 'none';
   document.getElementById('input-camera').value = '';
   document.getElementById('input-gallery').value = '';
   showTab(0);
@@ -451,12 +526,15 @@ function renderMatrix() {
 function renderChannels() {
   const grid = document.getElementById('channels-grid');
   grid.innerHTML = '';
-  [{ch:0,cls:'ch-r',lbl:'Canal R — Rojo',col:[255,0,0]},
-   {ch:1,cls:'ch-g',lbl:'Canal G — Verde',col:[0,255,0]},
-   {ch:2,cls:'ch-b',lbl:'Canal B — Azul',col:[0,0,255]}].forEach(({ch,cls,lbl,col}) => {
+  [{ch:0,cls:'ch-r',lbl:'Canal R — Rojo',col:[255,0,0],desc:'Intensidad del rojo en cada píxel. Valores altos = zonas rojizas o muy iluminadas.'},
+   {ch:1,cls:'ch-g',lbl:'Canal G — Verde',col:[0,255,0],desc:'Intensidad del verde. El ojo humano es más sensible a este canal.'},
+   {ch:2,cls:'ch-b',lbl:'Canal B — Azul',col:[0,0,255],desc:'Intensidad del azul. Suele ser más bajo en zonas de piel.'}].forEach(({ch,cls,lbl,col,desc}) => {
     const wrap=document.createElement('div'); wrap.className='channel-item';
     const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
     const ctx=cv.getContext('2d'), out=ctx.createImageData(W,H);
+    // compute min/max for this channel
+    let mn=255, mx=0;
+    for (let i=0;i<W*H;i++) { const v=imgData.data[i*4+ch]; if(v<mn)mn=v; if(v>mx)mx=v; }
     for (let i=0;i<W*H;i++) {
       const v=imgData.data[i*4+ch];
       out.data[i*4]=col[0]?v:0; out.data[i*4+1]=col[1]?v:0;
@@ -464,7 +542,9 @@ function renderChannels() {
     }
     ctx.putImageData(out,0,0);
     const l=document.createElement('div'); l.className=`channel-lbl ${cls}`; l.textContent=lbl;
-    wrap.appendChild(cv); wrap.appendChild(l); grid.appendChild(wrap);
+    const info=document.createElement('div'); info.className='submatrix-label';
+    info.innerHTML=`min: <strong>${mn}</strong> · max: <strong>${mx}</strong><br><span style="color:#5a5a7a;font-size:8px">${desc}</span>`;
+    wrap.appendChild(cv); wrap.appendChild(l); wrap.appendChild(info); grid.appendChild(wrap);
   });
 }
 
@@ -545,12 +625,36 @@ function updateCompression() {
 
 // ── Glitch Art ──
 const glitchInfo = {
-  invert:    { formula: 'f(M) = 255 − M &nbsp;·&nbsp; inversión de la matriz',    explain: '<strong>Inversión:</strong> Cada valor del píxel se convierte en <strong>255 − valor</strong>.<br>Es una transformación lineal elemental: <strong>f(x) = −x + 255</strong>.<br>Así funcionan los filtros negativos en cualquier editor de imagen.' },
-  transpose: { formula: 'f(M) = Mᵀ &nbsp;·&nbsp; transpuesta (filas ↔ columnas)', explain: '<strong>Transpuesta:</strong> Intercambia filas y columnas de la matriz.<br>Si el píxel estaba en [i,j], ahora está en <strong>[j,i]</strong>.<br>Operación fundamental en álgebra lineal y procesamiento de señales.' },
-  fliph:     { formula: 'f(M) = M[ :, ::-1 ] &nbsp;·&nbsp; espejo horizontal',     explain: '<strong>Flip Horizontal:</strong> Invierte el orden de las columnas.<br>Equivale a multiplicar por una <strong>matriz de permutación</strong>.<br>Tu cara al revés — igual que verte en un espejo.' },
-  flipv:     { formula: 'f(M) = M[ ::-1, : ] &nbsp;·&nbsp; espejo vertical',       explain: '<strong>Flip Vertical:</strong> Invierte el orden de las filas.<br>Otra <strong>matriz de permutación</strong>, esta vez sobre el eje Y.<br>Exactamente lo que hace numpy con M[::-1, :].' },
-  noise:     { formula: 'f(M) = M + ε·N,  N ~ U(0,80) &nbsp;·&nbsp; ruido aleatorio', explain: '<strong>Ruido:</strong> Se suma una <strong>matriz de valores aleatorios</strong> N a la imagen original.<br>Fórmula: <strong>f(M) = M + εN</strong>, donde N es ruido uniforme.<br>Así se modelan errores de sensor en Big Data real.' },
-  shift:     { formula: 'f(M) = roll(M, offset) &nbsp;·&nbsp; desplazamiento cíclico', explain: '<strong>Shift cíclico:</strong> Desplaza las filas de la matriz como si fueran circular.<br>Equivale a una <strong>permutación cíclica</strong> de las filas.<br>Se usa en procesamiento de señales y convoluciones.' },
+  invert: {
+    formula: 'f(M) = 255 − M &nbsp;·&nbsp; inversión de valores',
+    explain: '<strong>¿Qué hace?</strong> Cada número de la matriz se convierte en su opuesto: si un píxel vale 200 (muy brillante), pasa a ser 55 (muy oscuro). La fórmula es <strong>f(x) = −x + 255</strong>, que en álgebra lineal es una transformación afín — una combinación de reflexión más traslación.',
+    example: 'Así funcionaban los negativos de las cámaras analógicas de película. También lo usas cuando activas el "modo oscuro" de una imagen en cualquier editor como Photoshop o Lightroom.'
+  },
+  transpose: {
+    formula: 'f(M) = Mᵀ &nbsp;·&nbsp; transpuesta (filas ↔ columnas)',
+    explain: '<strong>¿Qué hace?</strong> Intercambia filas por columnas en la matriz. Si un píxel estaba en la posición [fila 10, columna 30], ahora está en [fila 30, columna 10]. Es como doblar la imagen sobre su diagonal principal. Es una de las operaciones más fundamentales en álgebra lineal.',
+    example: 'La transpuesta se usa constantemente en Machine Learning — al entrenar redes neuronales, la multiplicación de matrices siempre require transponer los pesos para que las dimensiones coincidan. Sin ella, no existiría el deep learning.'
+  },
+  fliph: {
+    formula: 'f(M) = M[ :, ::-1 ] &nbsp;·&nbsp; espejo horizontal',
+    explain: '<strong>¿Qué hace?</strong> Invierte el orden de las columnas. La primera columna se convierte en la última y viceversa. Matemáticamente, es multiplicar por una <strong>matriz de permutación</strong> — una matriz especial con solo ceros y unos que reordena elementos.',
+    example: 'El flip horizontal se usa en entrenamiento de IA para "aumentar datos": si tienes 1,000 fotos de caras, las volteas horizontalmente y ya tienes 2,000. Así los modelos aprenden que una cara de frente sigue siendo una cara aunque esté espejada.'
+  },
+  flipv: {
+    formula: 'f(M) = M[ ::-1, : ] &nbsp;·&nbsp; espejo vertical',
+    explain: '<strong>¿Qué hace?</strong> Invierte el orden de las filas — la primera fila se convierte en la última. Es exactamente como el flip horizontal pero en el eje Y. También es una matriz de permutación, solo que actúa sobre las filas en vez de las columnas.',
+    example: 'Los satélites de observación de la Tierra reciben las imágenes "al revés" según su orientación orbital. Un flip vertical corrige automáticamente la orientación antes de procesarlas.'
+  },
+  noise: {
+    formula: 'f(M) = M + ε·N, &nbsp; N ~ U(0, 80)',
+    explain: '<strong>¿Qué hace?</strong> Suma una matriz N de valores aleatorios a cada píxel de tu imagen. El resultado son esos puntos de "estática" que aparecen. En notación matemática: <strong>M\' = M + εN</strong>, donde N es una matriz de ruido uniforme y ε controla la intensidad.',
+    example: 'En Big Data real, ningún dato es perfecto — siempre hay ruido de sensores, errores de medición o interferencias. Los modelos de IA deben entrenarse con datos ruidosos para funcionar en el mundo real. También así se entrena a los modelos a ser robustos.'
+  },
+  shift: {
+    formula: 'f(M) = roll(M, offset) &nbsp;·&nbsp; permutación cíclica',
+    explain: '<strong>¿Qué hace?</strong> Desplaza todas las filas de la matriz hacia abajo de forma cíclica — lo que sale por arriba reaparece por abajo. Es una <strong>permutación cíclica</strong>, que en álgebra lineal se representa también con una matriz de permutación especial.',
+    example: 'Las convoluciones (el corazón de las redes neuronales de visión por computadora como las que usa Instagram para sus filtros) usan desplazamientos cíclicos para aplicar filtros a toda la imagen de forma eficiente.'
+  }
 };
 
 function applyGlitch(type, btn) {
@@ -616,12 +720,18 @@ function applyGlitch(type, btn) {
   // Update formula & explain
   document.getElementById('glitch-formula').innerHTML = glitchInfo[type].formula;
   document.getElementById('glitch-explain').innerHTML = glitchInfo[type].explain;
+  document.getElementById('glitch-example').innerHTML = glitchInfo[type].example;
 }
 
 // Auto-apply first glitch when image loads
 function initGlitch() {
-  const btn = document.querySelector('.glitch-btn');
+  const btn = document.querySelector('#panel-4 .glitch-btn');
   if (btn) applyGlitch('invert', btn);
+}
+
+function initWave() {
+  document.getElementById('wave-explain').innerHTML = waveInfo['sinx'].explain;
+  document.getElementById('wave-example').innerHTML = waveInfo['sinx'].example;
 }
 
 function setupPixelZoom() {
@@ -661,6 +771,116 @@ function setupPixelZoom() {
   target.addEventListener('touchmove', e=>{e.preventDefault();draw(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
   target.addEventListener('touchstart', e=>{e.preventDefault();draw(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
 }
-</script>
+
+// ── Wave Animation ──
+let waveType = 'sinx';
+let waveRAF = null;
+let waveT = 0;
+
+const waveInfo = {
+  sinx: {
+    formula: "M'[x,y] = M[ x, y + A·sin(2π·x/λ + t) ]",
+    explain: '<strong>¿Qué hace sin(x)?</strong> Desplaza cada columna de la imagen verticalmente según una onda seno. La columna x se mueve arriba o abajo según el valor de <strong>A·sin(2π·x/λ + t)</strong>. El tiempo t avanza solo, haciendo que la onda viaje hacia la derecha. <strong>A</strong> controla qué tan alto/bajo se mueve (amplitud) y <strong>λ</strong> controla qué tan seguido ondula (longitud de onda).',
+    example: 'Esta transformación simula el efecto visual del agua en movimiento. Los motores de videojuegos (Unity, Unreal) usan exactamente funciones seno para animar superficies de agua en tiempo real.'
+  },
+  siny: {
+    formula: "M'[x,y] = M[ x + A·sin(2π·y/λ + t), y ]",
+    explain: '<strong>¿Qué hace sin(y)?</strong> Misma idea que sin(x), pero ahora son las <strong>filas</strong> las que se desplazan horizontalmente. La onda viaja en dirección vertical. Cambia solo el eje — eso demuestra que x e y en la matriz son completamente independientes entre sí.',
+    example: 'El efecto "calor" que ves en las carreteras en días calurosos (refracción del aire) se modela matemáticamente con ondas verticales como esta. También aparece en efectos visuales de cine.'
+  },
+  radial: {
+    formula: "despl = A·sin(2π·r/λ + t),  r = √((x-cx)² + (y-cy)²)",
+    explain: '<strong>¿Qué hace sin(r)?</strong> En vez de usar x o y por separado, calcula <strong>r = distancia al centro</strong> de la imagen. La perturbación depende de esa distancia, creando círculos concéntricos. Usa coordenadas polares en vez de cartesianas — un cambio de sistema de referencia puro.',
+    example: 'Así se modela matemáticamente lo que ocurre cuando tiras una piedra al agua — las ondas circulares que se expanden. También describe las ondas sísmicas que se propagan desde el epicentro de un terremoto.'
+  },
+  cos2: {
+    formula: "M'[x,y] = M[ x, y + A·cos²(2π·x/λ + t) ]",
+    explain: '<strong>¿Qué hace cos²?</strong> El coseno al cuadrado nunca es negativo — siempre vale entre 0 y 1. Esto significa que el desplazamiento es siempre en la misma dirección, creando un efecto pulsante. Matemáticamente, <strong>cos²(θ) = (1 + cos(2θ)) / 2</strong>, lo que explica la doble frecuencia visual.',
+    example: 'Las señales de radio AM (modulación de amplitud) usan exactamente este principio. La voz del locutor modula la amplitud de una onda portadora — lo que ves aquí es esa modulación aplicada a tu foto.'
+  },
+  xory: {
+    formula: "M'[x,y] = M[ x + A·sin(2π·(x+y)/λ + t), y ]",
+    explain: '<strong>¿Qué hace sin(x+y)?</strong> La onda ya no viaja en dirección horizontal ni vertical — viaja en <strong>diagonal</strong>. Esto ocurre porque la función depende de la suma x+y, que aumenta igual si te mueves en x o en y. Matemáticamente, es como rotar 45° el eje de propagación.',
+    example: 'Las ondas diagonales aparecen en interferencia de ondas cruzadas en el océano, cuando el viento sopla de dos direcciones distintas. También se usan en patrones de difracción en óptica.'
+  },
+  ripple: {
+    formula: "despl = A·sin(2π·x/λ)·sin(2π·y/λ + t)",
+    explain: '<strong>¿Qué hace sin(x)·sin(y)?</strong> Multiplica dos ondas perpendiculares entre sí. El resultado es una <strong>rejilla de ondas estacionarias</strong>: algunos puntos nunca se mueven (nodos) y otros oscilan al máximo (antinodos). Es el producto tensorial de dos señales — álgebra lineal multidimensional.',
+    example: 'Esta es la física de las "figuras de Chladni": si pones arena sobre una placa metálica y la haces vibrar, la arena se acumula exactamente en los nodos — creando patrones geométricos hermosos. También describe modos de vibración en instrumentos musicales.'
+  }
+};
+
+function setWave(type, btn) {
+  waveType = type;
+  document.querySelectorAll('#panel-5 .glitch-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('wave-formula').innerHTML = waveInfo[type].formula;
+  document.getElementById('wave-explain').innerHTML = waveInfo[type].explain;
+  document.getElementById('wave-example').innerHTML = waveInfo[type].example;
+}
+
+function startWave() {
+  if (!imgData || waveRAF) return;
+  animateWave();
+}
+
+function stopWave() {
+  if (waveRAF) { cancelAnimationFrame(waveRAF); waveRAF = null; }
+}
+
+function animateWave() {
+  waveT += 0.07;
+  drawWaveFrame(waveT);
+  waveRAF = requestAnimationFrame(animateWave);
+}
+
+function drawWaveFrame(t) {
+  const canvas = document.getElementById('wave-canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const out = ctx.createImageData(W, H);
+  const src = imgData.data;
+  const A = parseInt(document.getElementById('amp-slider').value);
+  const lam = parseInt(document.getElementById('lam-slider').value);
+  const cx = W/2, cy = H/2;
+
+  for (let y=0; y<H; y++) {
+    for (let x=0; x<W; x++) {
+      let sx = x, sy = y;
+
+      if (waveType === 'sinx') {
+        sy = y + A * Math.sin(2*Math.PI*x/lam + t);
+      } else if (waveType === 'siny') {
+        sx = x + A * Math.sin(2*Math.PI*y/lam + t);
+      } else if (waveType === 'radial') {
+        const r = Math.sqrt((x-cx)**2 + (y-cy)**2);
+        const angle = Math.atan2(y-cy, x-cx);
+        const d = A * Math.sin(2*Math.PI*r/lam + t);
+        sx = x + d * Math.cos(angle);
+        sy = y + d * Math.sin(angle);
+      } else if (waveType === 'cos2') {
+        const c = Math.cos(2*Math.PI*x/lam + t);
+        sy = y + A * c * c;
+      } else if (waveType === 'xory') {
+        sx = x + A * Math.sin(2*Math.PI*(x+y)/lam + t);
+      } else if (waveType === 'ripple') {
+        sx = x + A * Math.sin(2*Math.PI*x/lam) * Math.sin(2*Math.PI*y/lam + t);
+        sy = y + A * Math.sin(2*Math.PI*y/lam) * Math.cos(2*Math.PI*x/lam + t);
+      }
+
+      const srcX = Math.max(0, Math.min(W-1, Math.round(sx)));
+      const srcY = Math.max(0, Math.min(H-1, Math.round(sy)));
+      const si = (srcY*W + srcX)*4;
+      const di = (y*W + x)*4;
+      out.data[di]=src[si]; out.data[di+1]=src[si+1];
+      out.data[di+2]=src[si+2]; out.data[di+3]=255;
+    }
+  }
+  ctx.putImageData(out, 0, 0);
+}
+
+function processAll() {
+  renderMatrix(); renderChannels(); setupPCA(); setupPixelZoom(); initGlitch(); initWave();
+}
 </body>
 </html>
